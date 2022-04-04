@@ -10,7 +10,7 @@ from general_functions import makeFlatList
 # Takes in data from EyeSeeCam, merges it into one pd dataframe and saves as csv file. Does the same for optotrak data
 
 # Change data_dir to where your repository lives and save_dir to wherever your data will live (I usually have it in the cloud since it't too big to GitHub).
-data_dir = r'C:/Users/angie/Git Root/esc_optotrak/data/' # may be too large
+data_dir = r'C:/Users/angie/Box/EyeSeeCam/raw_data/' # It's too large to send via Git. Make sure you download raw_data from the HU Box (ESC/recording_session_20220324)
 save_dir = r'C:/Users/angie/Box/EyeSeeCam/data/'
 
 # Then run. Should work.
