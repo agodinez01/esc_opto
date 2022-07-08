@@ -41,7 +41,7 @@ def get_csv_file():
 
                 if file[0:2] == 'ba':
                     df['subject'] = file[0:4]
-                    df['condition'] = file[4]
+                    df['condition'] = 'still'
 
                 else:
                     df['subject'] = file[0:2]
@@ -59,7 +59,7 @@ def get_csv_file():
 
                 if file[-9:-7] == 'ba':
                     df['subject'] = file[-9:-5]
-                    df['condition'] = file[-5]
+                    df['condition'] = 'still'
 
                 else:
                     df['subject'] = file[-9:-7]
@@ -71,6 +71,7 @@ def get_csv_file():
 data_esc, data_opto3d, data_opto6d = get_csv_file()
 
 esc_data = pd.concat(data_esc)
+esc_data['condition'].replace({'0': 'still', 0: 'still'})
 esc_data.to_csv(save_dir + 'esc_data.csv', index=False)
 
 opto3_data = pd.concat(data_opto3d)
