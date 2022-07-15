@@ -33,7 +33,7 @@ def makeFlatList(input_list):
     return flatL
 
 # Create DF for variables of interest
-def createESC_HeadSensorDF():
+def createESC_HeadSensorDF(system):
     subVals = []
     conditionVals = []
     timeVals = []
