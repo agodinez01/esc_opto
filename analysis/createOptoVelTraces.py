@@ -1,12 +1,6 @@
 import os
-from os import listdir
-from os.path import isfile, join
 import pandas as pd
 import numpy as np
-from scipy.stats import gmean
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy.integrate import quad_vec
 
 data_dir = r'C:/Users/angie/Box/EyeSeeCam/data/'
 os.chdir(data_dir)
@@ -41,6 +35,7 @@ def getNowandPrevious(data):
 def makeVelDF():
     subVals = []
     condVals = []
+    marVals = []
     timeVals = []
     velocityVals = []
 
@@ -75,20 +70,22 @@ def makeVelDF():
 
                     subL = [sub] * len(velocity)
                     condL = [cond] * len(velocity)
+                    marL = [mar] * len(velocity)
                     timeL = real_now_time
 
                 subVals.append(subL)
                 condVals.append(condL)
+                marVals.append(marL)
                 timeVals.append(timeL)
                 velocityVals.append(velocity)
 
-    return subVals, condVals, timeVals, velocityVals
-subVals, condVals, timeVals, velocityVals = makeVelDF()
+    return subVals, condVals, marVals, timeVals, velocityVals
+subVals, condVals, marVals, timeVals, velocityVals = makeVelDF()
 
-list_of_lists = [subVals, condVals, timeVals, velocityVals]
+list_of_lists = [subVals, condVals, marVals, timeVals, velocityVals]
 flatL = makeFlatList(list_of_lists)
 
-frames = {'subject': flatL[0], 'condition': flatL[1], 'time': flatL[2], 'velocity': flatL[3]}
+frames = {'subject': flatL[0], 'condition': flatL[1], 'marker': flatL[2], 'time': flatL[3], 'velocity': flatL[4]}
 df = pd.DataFrame(frames)
 
 df.to_csv(data_dir + 'optoVelocity.csv', index=False)
