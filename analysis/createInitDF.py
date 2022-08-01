@@ -2,9 +2,6 @@ import os
 from os import listdir
 from os.path import isfile, join
 import pandas as pd
-import numpy as np
-from scipy.stats import gmean
-from general_functions import makeFlatList
 
 # Created by A. Godinez April 2022
 # Takes in data from EyeSeeCam, merges it into one pd dataframe and saves as csv file. Does the same for optotrak data
