@@ -4,15 +4,18 @@ from os.path import isfile, join
 import pandas as pd
 
 # Created by A. Godinez April 2022
-# Takes in data from EyeSeeCam, merges it into one pd dataframe and saves as csv file. Does the same for optotrak data
+# Takes in data from EyeSeeCam, merges it into one pd dataframe and saves as csv file. Does the same for optotrak data.
+# 24/08/2023 Added code for EyeLink run.
 
 # Change data_dir to where your repository lives and save_dir to wherever your data will live (I usually have it in the cloud since it't too big to GitHub).
-data_dir = r'C:/Users/angie/Box/EyeSeeCam/raw_data/' # It's too large to send via Git. Make sure you download raw_data from the HU Box (ESC/recording_session_20220324)
+data_dir = r'C:/Users/angie/Box/EyeSeeCam/raw_data/' # For EyeSeeCam, it's too large to send via Git. Make sure you download raw_data from the HU Box (ESC/recording_session_20220324)
 save_dir = r'C:/Users/angie/Box/EyeSeeCam/data/'
 
 # Then run. Should work.
 
-# Load optotrak and eyeSeeCam data
+eye_tracking = 1 # EyeSeeCam = 0; EyeLink = 1
+
+# Load optotrak and eye tracking data
 os.chdir(data_dir)
 
 # Go through every folder in the path and create a list
@@ -20,7 +23,8 @@ a = [x[0] for x in os.walk(data_dir)]
 system_list = [f for f in listdir(data_dir)]
 
 def get_csv_file():
-    data_esc = []
+
+    data_eye = []
     data_opto3d = []
     data_opto6d = []
 
@@ -31,6 +35,7 @@ def get_csv_file():
         sys_file_list = [f for f in listdir(file_dir) if isfile(join(file_dir, f))]
 
         for file in sys_file_list:
+            df = []
 
             if sys == 'esc':
                 df = pd.read_csv(file_dir + '/' + file, index_col=False)
@@ -44,7 +49,7 @@ def get_csv_file():
                     df['subject'] = file[0:2]
                     df['condition'] = file[2:5]
 
-                data_esc.append(df)
+                data_eye.append(df)
 
             elif sys == 'optotrak':
                 df = pd.read_csv(file_dir + '/' + file, skiprows=3, index_col=False)
@@ -62,14 +67,43 @@ def get_csv_file():
                     df['subject'] = file[-9:-7]
                     df['condition'] = file[-7:-4]
 
+            elif sys == 'optotrak2':
+                df = pd.read_csv(file_dir + '/' + file, skiprows=3, index_col=False)
+                if file[32:34] == '3d':
+                    data_opto3d.append(df)
 
-    return data_esc, data_opto3d, data_opto6d
+                elif file[32:34] == '6d':
+                    data_opto6d.append(df)
 
-data_esc, data_opto3d, data_opto6d = get_csv_file()
+                df['subject'] = file[-12:-10]
+                df['trial'] = file[-10]
+                df['condition'] = file[-9:-6]
+                df['delay'] = file[-5]
 
-esc_data = pd.concat(data_esc)
-esc_data['condition'].replace({'0': 'still', 0: 'still'})
-esc_data.to_csv(save_dir + 'esc_data.csv', index=False)
+            elif sys == 'eyeLink':
+                df = pd.read_csv(file_dir + '/' + file, index_col=False)
+                df['start_stamp'] = file[9:29]
+                df['subject'] = file[0:2]
+                df['trial'] = file[2]
+                df['condition'] = file[3:6]
+                df['delay'] = file[7]
+
+                data_eye.append(df)
+
+    return data_eye, data_opto3d, data_opto6d
+
+if eye_tracking == 0:
+    data_eye, data_opto3d, data_opto6d = get_csv_file()
+
+    esc_data = pd.concat(data_eye)
+    esc_data['condition'].replace({'0': 'still', 0: 'still'})
+    esc_data.to_csv(save_dir + 'esc_data.csv', index=False)
+
+elif eye_tracking == 1:
+    data_eye, data_opto3d, data_opto6d = get_csv_file()
+
+    eyeLink_data = pd.concat(data_eye)
+    eyeLink_data.to_csv(save_dir + 'eyeLink_data.csv', index=False)
 
 opto3_data = pd.concat(data_opto3d)
 opto3_data.to_csv(save_dir + 'opto3_data.csv', index=False)
