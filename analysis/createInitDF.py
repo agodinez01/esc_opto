@@ -9,11 +9,15 @@ import pandas as pd
 
 # Change data_dir to where your repository lives and save_dir to wherever your data will live (I usually have it in the cloud since it't too big to GitHub).
 data_dir = r'C:/Users/angie/Box/EyeSeeCam/raw_data/' # For EyeSeeCam, it's too large to send via Git. Make sure you download raw_data from the HU Box (ESC/recording_session_20220324)
-save_dir = r'C:/Users/angie/Box/EyeSeeCam/data/'
 
 # Then run. Should work.
 
 eye_tracking = 1 # EyeSeeCam = 0; EyeLink = 1
+
+if eye_tracking == 0:
+    save_dir = r'C:/Users/angie/Box/EyeSeeCam/data/esc_session/'
+elif eye_tracking == 1:
+    save_dir = r'C:/Users/angie/Box/EyeSeeCam/data/eyeLink_session/'
 
 # Load optotrak and eye tracking data
 os.chdir(data_dir)

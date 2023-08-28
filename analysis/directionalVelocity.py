@@ -2,7 +2,13 @@ import os
 import pandas as pd
 import numpy as np
 
-data_dir = r'C:/Users/angie/Box/EyeSeeCam/data/'
+eye_tracking = 1 # EyeSeeCam = 0; EyeLink = 1
+
+if eye_tracking == 0:
+    data_dir = r'C:/Users/angie/Box/EyeSeeCam/data/esc_session/'
+elif eye_tracking == 1:
+    data_dir = r'C:/Users/angie/Box/EyeSeeCam/data/eyeLink_session/'
+
 os.chdir(data_dir)
 
 # Load opto track data
@@ -10,6 +16,8 @@ optoDF = pd.read_csv('optoTidyDF.csv')
 
 subjects = optoDF.subject.unique()
 conditions = optoDF.condition.unique()
+delays = optoDF.delay.unique()
+trials = optoDF.trial.unique()
 markers = optoDF.marker.unique()
 directions = optoDF.direction.unique()
 
@@ -37,6 +45,8 @@ def getNowandPrevious(data):
 def makeDirectionalVelocity():
     subVals = []
     condVals = []
+    delayVals = []
+    trialVals = []
     marVals = []
     dirVals = []
     timeVals = []
@@ -45,42 +55,48 @@ def makeDirectionalVelocity():
 
     for sub in subjects:
         for cond in conditions:
-            for mar in markers:
-                for dir in directions:
+            for d in delays:
+                for t in trials:
+                    for mar in markers:
+                        for dir in directions:
 
-                    data = optoDF.loc[(optoDF.subject == sub) & (optoDF.condition == cond) & (optoDF.marker == mar) & (optoDF.direction == dir)]
+                            data = optoDF.loc[(optoDF.subject == sub) & (optoDF.condition == cond) & (optoDF.delay == d) & (optoDF.trial == t) & (optoDF.marker == mar) & (optoDF.direction == dir)]
 
-                    if len(data) == 0:
-                        print(cond + ' and marker ' + str(mar) + dir + ' does not exist in ' + sub + 's file')
-                        continue
-                    else:
-                        print('working on ' + sub + ' ' + cond + ' ' + str(mar) + dir)
+                            if len(data) == 0:
+                                print('Subject: ' + sub + ' condition: ' + cond + ' delay: ' + str(d) + ' trial: ' + str(t) + ' does not exist')
+                                continue
+                            else:
+                                print('working on subject: ' + sub + ', Condition: ' + cond + ', Delay: ' + str(d) + ' and Trial: ' + str(t))
 
-                        nowPosition, previousPosition = getNowandPrevious(data.position)
+                                nowPosition, previousPosition = getNowandPrevious(data.position)
 
-                        velocity = (nowPosition - previousPosition)/ sampleDifference
+                                velocity = (nowPosition - previousPosition)/ sampleDifference
 
-                        subL = [sub] * len(velocity)
-                        condL = [cond] * len(velocity)
-                        marL = [mar] * len(velocity)
-                        dirL = [dir] * len(velocity)
+                                subL = [sub] * len(velocity)
+                                condL = [cond] * len(velocity)
+                                delayL = [d] * len(velocity)
+                                trialL = [t] * len(velocity)
+                                marL = [mar] * len(velocity)
+                                dirL = [dir] * len(velocity)
 
-                    subVals.append(subL)
-                    condVals.append(condL)
-                    marVals.append(marL)
-                    dirVals.append(dirL)
-                    timeVals.append(data.time)
-                    posVals.append(data.position)
-                    velVals.append(velocity)
+                            subVals.append(subL)
+                            condVals.append(condL)
+                            delayVals.append(delayL)
+                            trialVals.append(trialL)
+                            marVals.append(marL)
+                            dirVals.append(dirL)
+                            timeVals.append(data.time)
+                            posVals.append(data.position)
+                            velVals.append(velocity)
 
 
-    return subVals, condVals, marVals, dirVals, timeVals, posVals, velVals
-subL, condL, marL, dirL, timeL, posL, velL = makeDirectionalVelocity()
+    return subVals, condVals, delayVals, trialVals, marVals, dirVals, timeVals, posVals, velVals
+subL, condL, delayL, trialL, marL, dirL, timeL, posL, velL = makeDirectionalVelocity()
 
-list_of_lists = [subL, condL, marL, dirL, timeL, posL, velL]
+list_of_lists = [subL, condL, delayL, trialL, marL, dirL, timeL, posL, velL]
 flatL = makeFlatList(list_of_lists)
 
-frames = {'subject': flatL[0], 'condition': flatL[1], 'marker': flatL[2], 'direction': flatL[3], 'time': flatL[4], 'position': flatL[5], 'velocity': flatL[6]}
+frames = {'subject': flatL[0], 'condition': flatL[1], 'delay':flatL[2], 'trial':flatL[3], 'marker': flatL[4], 'direction': flatL[5], 'time': flatL[6], 'position': flatL[7], 'velocity': flatL[8]}
 df = pd.DataFrame(frames)
 
 df.to_csv(data_dir + 'optoPositionVelocity.csv', index=False)
