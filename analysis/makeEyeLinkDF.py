@@ -39,6 +39,7 @@ def makeEyeLinkDF():
     positionVals = []
     markerVals = []
     directionVals = []
+    ELTimeVals = []
 
     for sub in subjects:
         for cond in conditions:
@@ -54,9 +55,6 @@ def makeEyeLinkDF():
                         print('working on subject: ' + sub + ', Condition: ' + cond + ', Delay: ' + str(
                             d) + ' and Trial: ' + str(t))
 
-                    data['Time_EL'] = (data['Time_EL'] - data['Time_EL'].iloc[0]) / 1000
-                    data['RetrieveTime_EL'] = data['RetrieveTime_EL'] / 1000
-
                     position = pd.concat([data['Marker1X'], data['Marker1Y'],
                                            data['Marker2X'], data['Marker2Y'],
                                            data['Marker3X'], data['Marker3Y'],
@@ -67,11 +65,14 @@ def makeEyeLinkDF():
 
                     direction = pd.concat([pd.Series(['x'] * len(data['Marker1X'])), pd.Series(['y'] * len(data['Marker1X']))])
                     direction = pd.concat([direction] * numMarkers).to_list()
+
+                    elTime = pd.concat([data.Time_EL] *numMarkers *numDirections)
+
+                    data['Time_EL'] = (data['Time_EL'] - data['Time_EL'].iloc[0]) / 1000
+                    data['RetrieveTime_EL'] = data['RetrieveTime_EL'] / 1000
+
                     time = pd.concat([data.Time_EL] *numMarkers *numDirections)
                     retrieve_time_EL = pd.concat([data.RetrieveTime_EL] *numMarkers *numDirections)
-
-                    #time = pd.concat([data['Time_EL'].to_list()] * numMarkers *numDirections)
-                    #retrieve_time_EL = pd.concat(data['RetrieveTime_EL'].to_list() *numMarkers *numDirections)
 
                     subList = pd.Series(np.hstack(([sub] * len(data['Marker1X']) *numMarkers *numDirections)))
                     condList = pd.Series(np.hstack(([cond] * len(data['Marker1X']) *numMarkers *numDirections)))
@@ -82,19 +83,20 @@ def makeEyeLinkDF():
                     condVals.append(condList)
                     delayVals.append(delayList)
                     trialVals.append(trialList)
+                    ELTimeVals.append(elTime)
                     timeVals.append(time)
                     retrieveTimeVals.append(retrieve_time_EL)
                     positionVals.append(position)
                     markerVals.append(marker)
                     directionVals.append(direction)
 
-    return subVals, condVals, delayVals, trialVals, timeVals, retrieveTimeVals, positionVals, markerVals, directionVals
-subVals, condVals, delayVals, trialVals, timeVals, retrieveTimeVals, positionVals, markerVals, directionVals = makeEyeLinkDF()
+    return subVals, condVals, delayVals, trialVals, ELTimeVals, timeVals, retrieveTimeVals, positionVals, markerVals, directionVals
+subVals, condVals, delayVals, trialVals, ELTimeVals, timeVals, retrieveTimeVals, positionVals, markerVals, directionVals = makeEyeLinkDF()
 
-list_of_list = [subVals, condVals, delayVals, trialVals, timeVals, retrieveTimeVals, positionVals, markerVals, directionVals]
+list_of_list = [subVals, condVals, delayVals, trialVals, ELTimeVals, timeVals, retrieveTimeVals, positionVals, markerVals, directionVals]
 flatL = makeFlatList(list_of_list)
 
-frames = {'subject':flatL[0], 'condition':flatL[1], 'delay':flatL[2], 'trial':flatL[3], 'frameTime':flatL[4], 'retrieveTime':flatL[5], 'position':flatL[6], 'marker':flatL[7], 'direction':flatL[8]}
+frames = {'subject':flatL[0], 'condition':flatL[1], 'delay':flatL[2], 'trial':flatL[3], 'Time_EL':flatL[4], 'frameTime':flatL[5], 'retrieveTime':flatL[6], 'position':flatL[7], 'marker':flatL[8], 'direction':flatL[9]}
 df = pd.DataFrame(frames)
 
 df.to_csv(data_dir + 'elTidyDF.csv', index=False)

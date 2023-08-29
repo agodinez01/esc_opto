@@ -73,6 +73,8 @@ def get_csv_file():
 
             elif sys == 'optotrak2':
                 df = pd.read_csv(file_dir + '/' + file, skiprows=3, index_col=False)
+                assert len(df) == 8750, f"Expected a length of 8750, but got something else {len(df)}"
+
                 if file[32:34] == '3d':
                     data_opto3d.append(df)
 
@@ -86,6 +88,9 @@ def get_csv_file():
 
             elif sys == 'eyeLink':
                 df = pd.read_csv(file_dir + '/' + file, index_col=False)
+                assert len(df) == 8750, f"Expected a length of 8750, but got something else {len(df)}"
+
+
                 df['start_stamp'] = file[9:29]
                 df['subject'] = file[0:2]
                 df['trial'] = file[2]

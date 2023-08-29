@@ -40,9 +40,9 @@ def makeVelDF():
     delayVals = []
     trialVals = []
     marVals = []
+    ELTimeVals = []
     sampleTimeVals = []
     retrieveTimeVals = []
-    posVals = []
     sampleVelVals = []
     retrieveVelVals = []
 
@@ -88,25 +88,27 @@ def makeVelDF():
                         marL = [mar] * len(sample_velocity)
                         sampleTimeL = sample_real_now_time
                         retreiveTimeL = retrieved_now_time
+                        el_time = data.Time_EL[data.direction == 'x']
 
                         subVals.append(subL)
                         condVals.append(condL)
                         delayVals.append(delayL)
                         trialVals.append(trialL)
                         marVals.append(marL)
+                        ELTimeVals.append(el_time)
                         sampleTimeVals.append(sampleTimeL)
                         retrieveTimeVals.append(retreiveTimeL)
                         sampleVelVals.append(sample_velocity)
                         retrieveVelVals.append(retrieved_velocity)
 
-    return subVals, condVals, delayVals, trialVals, marVals, sampleTimeVals, retrieveTimeVals, sampleVelVals, retrieveVelVals
-subVals, condVals, delayVals, trialVals, marVals, sampleTimeVals, retrieveTimeVals, sampleVelVals, retrieveVelVals = makeVelDF()
+    return subVals, condVals, delayVals, trialVals, marVals, ELTimeVals, sampleTimeVals, retrieveTimeVals, sampleVelVals, retrieveVelVals
+subVals, condVals, delayVals, trialVals, marVals, ELTimeVals, sampleTimeVals, retrieveTimeVals, sampleVelVals, retrieveVelVals = makeVelDF()
 
-list_of_lists = [subVals, condVals, delayVals, trialVals, marVals, sampleTimeVals, retrieveTimeVals, sampleVelVals, retrieveVelVals]
+list_of_lists = [subVals, condVals, delayVals, trialVals, marVals, ELTimeVals, sampleTimeVals, retrieveTimeVals, sampleVelVals, retrieveVelVals]
 
 flatL = makeFlatList(list_of_lists)
 
-frames = {'subject':flatL[0], 'condition':flatL[1], 'delay':flatL[2], 'trial':flatL[3], 'marker':flatL[4], 'sampleTime':flatL[5], 'retrieveTime':flatL[6], 'sampleVelocity':flatL[7], 'retrieveVelocity':flatL[8]}
+frames = {'subject':flatL[0], 'condition':flatL[1], 'delay':flatL[2], 'trial':flatL[3], 'marker':flatL[4], 'Time_EL':flatL[5], 'sampleTime':flatL[6], 'retrieveTime':flatL[7], 'sampleVelocity':flatL[8], 'retrieveVelocity':flatL[9]}
 df = pd.DataFrame(frames)
 
 df.to_csv(data_dir + 'elVelocity.csv', index=False)

@@ -53,7 +53,10 @@ def makeVelDF():
 
                         if len(data) == 0:
                             print('Subject: ' + sub + ' condition: ' + cond + ' delay: ' + str(d) + ' trial: ' + str(t) + ' marker: ' + str(mar) + ' does not exist')
-                            continue
+                            if len(data) == 8750:
+                                print('Trial is complete. 35 seconds')
+                            else:
+                                print('Length of data is ' + str(len(data)))
                         else:
                             print('working on subject: ' + sub + ' condition: ' + cond + ' delay: ' + str(d) + ' trial: ' + str(t) + ' marker: ' + str(mar))
 

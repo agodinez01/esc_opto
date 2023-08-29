@@ -48,6 +48,7 @@ def makeDirectionalVelocity():
     posVals = []
     sampleVelVals = []
     retrieveVelVals = []
+    ELTimeVals = []
 
     for sub in subjects:
         for cond in conditions:
@@ -81,6 +82,7 @@ def makeDirectionalVelocity():
                                 condVals.append(condL)
                                 delayVals.append(delayL)
                                 trialVals.append(trialL)
+                                ELTimeVals.append(data.Time_EL)
                                 marVals.append(marL)
                                 dirVals.append(dirL)
                                 sampleTimeVals.append(data.frameTime)
@@ -89,13 +91,13 @@ def makeDirectionalVelocity():
                                 sampleVelVals.append(velocity_sampleTime)
                                 retrieveVelVals.append(velocity_retrieveTime)
 
-    return subVals, condVals, delayVals, trialVals, marVals, dirVals, sampleTimeVals, retrieveTimeVals, posVals, sampleVelVals, retrieveVelVals
-subL, condL, delayL, trialL, marL, dirL, sampleTimeL, retrieveTimeL, posL, sampleVelL, retrieveVelL = makeDirectionalVelocity()
+    return subVals, condVals, delayVals, trialVals, ELTimeVals, marVals, dirVals, sampleTimeVals, retrieveTimeVals, posVals, sampleVelVals, retrieveVelVals
+subL, condL, delayL, trialL, ELTimeL, marL, dirL, sampleTimeL, retrieveTimeL, posL, sampleVelL, retrieveVelL = makeDirectionalVelocity()
 
-list_of_lists = [subL, condL, delayL, trialL, marL, dirL, sampleTimeL, retrieveTimeL, posL, sampleVelL, retrieveVelL]
+list_of_lists = [subL, condL, delayL, trialL, ELTimeL, marL, dirL, sampleTimeL, retrieveTimeL, posL, sampleVelL, retrieveVelL]
 flatL = makeFlatList(list_of_lists)
 
-frames = {'subject':flatL[0], 'condition':flatL[1], 'delay':flatL[2], 'trial':flatL[3], 'marker':flatL[4], 'direction':flatL[5], 'sampleTime':flatL[6], 'retrieveTime':flatL[7], 'position':flatL[8], 'sampleVelocity':flatL[9], 'retrieveVelocity':flatL[10]}
+frames = {'subject':flatL[0], 'condition':flatL[1], 'delay':flatL[2], 'trial':flatL[3], 'Time_EL':flatL[4], 'marker':flatL[5], 'direction':flatL[6], 'sampleTime':flatL[7], 'retrieveTime':flatL[8], 'position':flatL[9], 'sampleVelocity':flatL[10], 'retrieveVelocity':flatL[11]}
 df = pd.DataFrame(frames)
 
 df.to_csv(data_dir + 'elPositionVelocity.csv', index=False)
