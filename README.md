@@ -1,5 +1,5 @@
 # esc_opto
-To validate esc head sensors with Optotrak
+To validate EyeSeeCam head sensors by co-registering the system with Optotrak and EyeLink 1000+
 
 1. createInitDF.py takes in individual files EyeSee Cam (ESC) and Opto track data and stacks them all together to get a DF of all data.
     - Creates csv files: esc_data.csv, opto3_data.csv and opto6_data.csv
